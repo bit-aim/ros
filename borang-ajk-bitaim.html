@@ -1,0 +1,966 @@
+
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Borang Maklumat AJK — BitAIM</title>
+<style>
+  /* ── Reset & Base ─────────────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy:   #1F4E79;
+    --blue:   #2E75B6;
+    --teal:   #007070;
+    --red:    #C00000;
+    --orange: #C55A11;
+    --grey:   #666;
+    --lgrey:  #f5f5f5;
+    --border: #ddd;
+    --white:  #fff;
+    --radius: 8px;
+    --shadow: 0 2px 12px rgba(0,0,0,.10);
+  }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 15px;
+    background: #eef2f7;
+    color: #222;
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* ── Header ───────────────────────────────────────────────────────────── */
+  .site-header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+    color: #fff;
+    padding: 28px 24px 22px;
+    text-align: center;
+    box-shadow: 0 3px 10px rgba(0,0,0,.2);
+  }
+  .site-header h1 { font-size: 1.55rem; font-weight: 700; letter-spacing: .3px; }
+  .site-header p  { font-size: .88rem; opacity: .88; margin-top: 5px; }
+  .badge {
+    display: inline-block;
+    background: rgba(255,255,255,.18);
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 20px;
+    padding: 3px 14px;
+    font-size: .78rem;
+    margin-top: 10px;
+    letter-spacing: .4px;
+  }
+
+  /* ── Progress Bar ─────────────────────────────────────────────────────── */
+  .progress-wrap {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 12px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 6px rgba(0,0,0,.07);
+  }
+  .progress-label { font-size: .8rem; color: var(--grey); margin-bottom: 6px; display: flex; justify-content: space-between; }
+  .progress-bar { height: 6px; background: #e0e0e0; border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--blue)); border-radius: 3px; transition: width .4s ease; width: 0%; }
+
+  /* ── Container ────────────────────────────────────────────────────────── */
+  .container { max-width: 780px; margin: 28px auto; padding: 0 16px; }
+
+  /* ── Notice Box ───────────────────────────────────────────────────────── */
+  .notice {
+    background: #fff8e8;
+    border-left: 5px solid var(--orange);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    font-size: .88rem;
+    color: #5a3a00;
+    line-height: 1.6;
+  }
+  .notice strong { color: var(--orange); }
+
+  /* ── Section Card ─────────────────────────────────────────────────────── */
+  .section-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 22px;
+    overflow: hidden;
+  }
+  .section-header {
+    background: var(--teal);
+    color: #fff;
+    padding: 13px 20px;
+    font-weight: 700;
+    font-size: .95rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-header .sec-icon { font-size: 1.1rem; }
+  .section-body { padding: 20px; }
+
+  /* ── Form Row ─────────────────────────────────────────────────────────── */
+  .form-row { margin-bottom: 18px; }
+  .form-row:last-child { margin-bottom: 0; }
+  .form-row.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media(max-width:560px){ .form-row.two-col { grid-template-columns: 1fr; } }
+
+  label {
+    display: block;
+    font-weight: 600;
+    font-size: .88rem;
+    color: var(--navy);
+    margin-bottom: 6px;
+  }
+  label .req { color: var(--red); margin-left: 3px; }
+  label .opt { color: var(--grey); font-weight: 400; font-size: .8rem; margin-left: 4px; }
+
+  input[type=text], input[type=email], input[type=tel], input[type=date],
+  select, textarea {
+    width: 100%;
+    padding: 10px 13px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    font-size: .93rem;
+    font-family: inherit;
+    color: #222;
+    background: #fff;
+    transition: border-color .2s, box-shadow .2s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(46,117,182,.15);
+  }
+  input.error, select.error, textarea.error {
+    border-color: var(--red);
+    box-shadow: 0 0 0 3px rgba(192,0,0,.12);
+  }
+  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+  textarea { resize: vertical; min-height: 80px; }
+
+  /* ── Radio / Checkbox Group ───────────────────────────────────────────── */
+  .radio-group, .check-group { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+  .radio-group label, .check-group label {
+    display: flex; align-items: center; gap: 7px;
+    font-weight: 400; font-size: .9rem; color: #333;
+    cursor: pointer; padding: 7px 14px;
+    border: 1.5px solid var(--border); border-radius: 6px;
+    background: var(--lgrey); transition: all .15s;
+    margin-bottom: 0;
+  }
+  .radio-group label:hover, .check-group label:hover { border-color: var(--blue); background: #e8f0fb; }
+  .radio-group input[type=radio], .check-group input[type=checkbox] {
+    width: 16px; height: 16px; accent-color: var(--teal);
+    border: none; box-shadow: none; padding: 0;
+  }
+  .radio-group label.selected, .check-group label.selected {
+    border-color: var(--teal); background: #e0f0f0; color: var(--teal); font-weight: 600;
+  }
+
+  /* ── Hint Text ────────────────────────────────────────────────────────── */
+  .hint { font-size: .78rem; color: var(--grey); margin-top: 5px; }
+  .hint.warn { color: var(--red); font-weight: 600; }
+  .hint.info { color: var(--blue); }
+
+  /* ── Error Message ────────────────────────────────────────────────────── */
+  .err-msg { font-size: .78rem; color: var(--red); margin-top: 4px; display: none; }
+  .err-msg.show { display: block; }
+
+  /* ── Declaration Box ──────────────────────────────────────────────────── */
+  .decl-box {
+    background: #fff0f0;
+    border: 1.5px solid var(--red);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-bottom: 18px;
+    font-size: .88rem;
+    line-height: 1.7;
+    color: #5a0000;
+  }
+  .decl-box strong { color: var(--red); }
+
+  /* ── Buttons ──────────────────────────────────────────────────────────── */
+  .btn-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+  .btn {
+    padding: 12px 28px; border: none; border-radius: 7px;
+    font-size: .95rem; font-weight: 700; cursor: pointer;
+    transition: all .2s; font-family: inherit;
+  }
+  .btn-primary { background: var(--teal); color: #fff; flex: 1; min-width: 160px; }
+  .btn-primary:hover { background: #005a5a; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,112,112,.3); }
+  .btn-secondary { background: #fff; color: var(--grey); border: 1.5px solid var(--border); }
+  .btn-secondary:hover { background: var(--lgrey); }
+  .btn-print { background: var(--navy); color: #fff; }
+  .btn-print:hover { background: #163a5c; }
+
+  /* ── Success Screen ───────────────────────────────────────────────────── */
+  #success-screen {
+    display: none;
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 48px 32px;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .success-icon { font-size: 4rem; margin-bottom: 16px; }
+  .success-title { font-size: 1.4rem; font-weight: 700; color: var(--teal); margin-bottom: 10px; }
+  .success-msg { color: var(--grey); font-size: .95rem; line-height: 1.7; margin-bottom: 24px; }
+
+  /* ── Print Styles ─────────────────────────────────────────────────────── */
+  @media print {
+    body { background: #fff; padding: 0; font-size: 12px; }
+    .progress-wrap, .btn-row, .btn-print, #success-screen { display: none !important; }
+    .site-header { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .section-header { background: var(--teal) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .section-card { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+    .container { max-width: 100%; padding: 0 8px; }
+    input, select, textarea { border: 1px solid #999 !important; }
+  }
+
+  /* ── Divider ──────────────────────────────────────────────────────────── */
+  .divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+  /* ── Ref No ───────────────────────────────────────────────────────────── */
+  .ref-bar {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 12px 20px;
+    margin-bottom: 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: .85rem;
+    color: var(--grey);
+  }
+  .ref-bar strong { color: var(--navy); }
+</style>
+</head>
+<body>
+
+<!-- ── Header ──────────────────────────────────────────────────────────── -->
+<header class="site-header">
+  <h1>📋 Borang Maklumat Ahli Jawatankuasa (AJK)</h1>
+  <p>Pertubuhan Literasi Bitcoin dan Kecerdasan Buatan (AI) Malaysia (BitAIM)</p>
+  <span class="badge">Untuk Tujuan Pendaftaran JPPM/ROS — Akta Pertubuhan 1966 [Akta 832]</span>
+</header>
+
+<!-- ── Progress ─────────────────────────────────────────────────────────── -->
+<div class="progress-wrap">
+  <div class="progress-label">
+    <span>Kemajuan Pengisian</span>
+    <span id="progress-pct">0%</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+</div>
+
+<!-- ── Main ─────────────────────────────────────────────────────────────── -->
+<main class="container">
+
+  <!-- Ref No -->
+  <div class="ref-bar">
+    <span>No. Rujukan: <strong id="ref-no">BM-AJK-BitAIM-<span id="ref-num">---</span></strong></span>
+    <span id="ref-date"></span>
+  </div>
+
+  <!-- Notice -->
+  <div class="notice">
+    ⚠️ <strong>ARAHAN:</strong> Sila isi borang ini dengan lengkap dan tepat. Medan bertanda
+    <span style="color:var(--red);font-weight:700">*</span> adalah <strong>WAJIB</strong> diisi.
+    Sila lampirkan salinan MyKad (depan &amp; belakang) bersama borang ini.
+    Maklumat yang diberikan adalah <strong>SULIT</strong> dan untuk tujuan pendaftaran ROS sahaja.
+  </div>
+
+  <form id="ajk-form" novalidate>
+
+  <!-- ── A: Jawatan ──────────────────────────────────────────────────────── -->
+  <div class="section-card">
+    <div class="section-header"><span class="sec-icon">🏛️</span> Jawatan dalam BitAIM</div>
+    <div class="section-body">
+      <div class="form-row">
+        <label>Jawatan <span class="req">*</span></label>
+        <div class="radio-group" id="rg-jawatan">
+          <label><input type="radio" name="jawatan" value="Yang Dipertua (Presiden)"> Yang Dipertua (Presiden)</label>
+          <label><input type="radio" name="jawatan" value="Timbalan Yang Dipertua"> Timbalan Yang Dipertua</label>
+          <label><input type="radio" name="jawatan" value="Setiausaha"> Setiausaha</label>
+          <label><input type="radio" name="jawatan" value="Penolong Setiausaha"> Penolong Setiausaha</label>
+          <label><input type="radio" name="jawatan" value="Bendahari"> Bendahari</label>
+          <label><input type="radio" name="jawatan" value="Ahli Jawatankuasa Biasa"> Ahli Jawatankuasa Biasa</label>
+        </div>
+        <div class="err-msg" id="err-jawatan">Sila pilih jawatan anda.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── B: Pengenalan Diri ──────────────────────────────────────────────── -->
+  <div class="section-card">
+    <div class="section-header"><span class="sec-icon">🪪</span> Bahagian B — Maklumat Pengenalan Diri</div>
+    <div class="section-body">
+
+      <div class="form-row two-col">
+        <div>
+          <label>Jenis Pengenalan Diri <span class="req">*</span></label>
+          <select id="jenis-id" name="jenis_id" required>
+            <option value="">— Sila Pilih —</option>
+            <option value="MyKad" selected>MyKad</option>
+            <option value="Pasport">Pasport</option>
+            <option value="Kad Tentera">Kad Tentera</option>
+            <option value="Kad Polis">Kad Polis</option>
+          </select>
+          <div class="err-msg" id="err-jenis-id">Sila pilih jenis pengenalan diri.</div>
+        </div>
+        <div>
+          <label>Nombor Pengenalan Diri <span class="req">*</span></label>
+          <input type="text" id="nombor-id" name="nombor_id" placeholder="Contoh: 800101-14-5678" required>
+          <div class="err-msg" id="err-nombor-id">Sila masukkan nombor pengenalan diri.</div>
+        </div>
+      </div>
+
+      <div class="form-row two-col">
+        <div>
+          <label>Gelaran <span class="req">*</span></label>
+          <select id="gelaran" name="gelaran" required>
+            <option value="">— Sila Pilih —</option>
+            <optgroup label="Biasa">
+              <option>Encik</option><option>Cik</option><option>Puan</option><option>Tuan</option>
+            </optgroup>
+            <optgroup label="Profesional">
+              <option>Dr.</option><option>Ir.</option><option>Ts.</option><option>Tc.</option>
+              <option>Prof.</option><option>Prof. Dr.</option>
+            </optgroup>
+            <optgroup label="Agama">
+              <option>Haji</option><option>Hajjah</option>
+            </optgroup>
+            <optgroup label="Kehormat">
+              <option>Dato'</option><option>Dato' Dr.</option><option>Dato' Haji</option><option>Dato' Hajjah</option>
+              <option>Dato' Sri</option><option>Dato' Sri Dr.</option>
+              <option>Datuk</option><option>Datuk Dr.</option><option>Datuk Seri</option><option>Datuk Seri Dr.</option>
+              <option>Tan Sri</option><option>Tan Sri Dato'</option><option>Tan Sri Dr.</option>
+              <option>Tun</option><option>Toh Puan</option><option>Puan Sri</option>
+              <option>Yang Mulia</option><option>Yang Amat Mulia</option>
+            </optgroup>
+            <optgroup label="Lain-lain">
+              <option>Lain-lain</option>
+            </optgroup>
+          </select>
+          <div class="err-msg" id="err-gelaran">Sila pilih gelaran.</div>
+        </div>
+        <div>
+          <label>Jantina <span class="req">*</span></label>
+          <div class="radio-group" id="rg-jantina">
+            <label><input type="radio" name="jantina" value="Lelaki"> Lelaki</label>
+            <label><input type="radio" name="jantina" value="Perempuan"> Perempuan</label>
+          </div>
+          <div class="err-msg" id="err-jantina">Sila pilih jantina.</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Nama Penuh <span class="req">*</span> <span class="opt">(seperti dalam MyKad — HURUF BESAR)</span></label>
+        <input type="text" id="nama-penuh" name="nama_penuh" placeholder="NAMA PENUH SEPERTI DALAM MYKAD" required style="text-transform:uppercase">
+        <div class="err-msg" id="err-nama-penuh">Sila masukkan nama penuh.</div>
+      </div>
+
+      <div class="form-row two-col">
+        <div>
+          <label>Kewarganegaraan <span class="req">*</span></label>
+          <select id="warganegara" name="warganegara" required>
+            <option value="Warganegara Malaysia" selected>Warganegara Malaysia</option>
+            <option value="Bukan Warganegara">Bukan Warganegara</option>
+          </select>
+        </div>
+        <div>
+          <label>Tarikh Lahir <span class="req">*</span></label>
+          <input type="date" id="tarikh-lahir" name="tarikh_lahir" required>
+          <div class="err-msg" id="err-tarikh-lahir">Sila masukkan tarikh lahir.</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Tempat Lahir <span class="req">*</span></label>
+        <input type="text" id="tempat-lahir" name="tempat_lahir" placeholder="Negeri / Negara" required>
+        <div class="err-msg" id="err-tempat-lahir">Sila masukkan tempat lahir.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── C: Pekerjaan ────────────────────────────────────────────────────── -->
+  <div class="section-card">
+    <div class="section-header"><span class="sec-icon">💼</span> Bahagian C — Maklumat Pekerjaan</div>
+    <div class="section-body">
+
+      <div class="form-row">
+        <label>Pekerjaan <span class="req">*</span></label>
+        <div class="radio-group" id="rg-pekerjaan">
+          <label><input type="radio" name="pekerjaan" value="Kerajaan"> Kerajaan</label>
+          <label><input type="radio" name="pekerjaan" value="Swasta"> Swasta</label>
+          <label><input type="radio" name="pekerjaan" value="Pesara"> Pesara</label>
+          <label><input type="radio" name="pekerjaan" value="Bekerja Sendiri"> Bekerja Sendiri</label>
+          <label><input type="radio" name="pekerjaan" value="Tidak Bekerja"> Tidak Bekerja</label>
+        </div>
+        <div class="err-msg" id="err-pekerjaan">Sila pilih kategori pekerjaan.</div>
+      </div>
+
+      <div class="form-row">
+        <label>Nama Majikan / Syarikat <span class="opt">(pilihan)</span></label>
+        <input type="text" id="nama-majikan" name="nama_majikan" placeholder="Nama majikan atau perniagaan">
+      </div>
+
+      <div class="form-row">
+        <label>Alamat Majikan <span class="opt">(pilihan)</span></label>
+        <input type="text" id="alamat-majikan" name="alamat_majikan" placeholder="No., Jalan, Taman, Bandar, Negeri">
+      </div>
+
+      <div class="form-row">
+        <label>Nombor Telefon Pejabat <span class="opt">(pilihan)</span></label>
+        <input type="tel" id="tel-pejabat-c" name="tel_pejabat" placeholder="+603-XXXX XXXX">
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── D: Alamat ───────────────────────────────────────────────────────── -->
+  <div class="section-card">
+    <div class="section-header"><span class="sec-icon">🏠</span> Bahagian D — Maklumat Alamat Kediaman</div>
+    <div class="section-body">
+
+      <div class="form-row">
+        <label>Alamat Kediaman (Baris 1) <span class="req">*</span></label>
+        <input type="text" id="alamat1" name="alamat1" placeholder="No. Rumah, Jalan, Taman" required>
+        <div class="err-msg" id="err-alamat1">Sila masukkan alamat kediaman.</div>
+      </div>
+
+      <div class="form-row">
+        <label>Alamat Kediaman (Baris 2) <span class="opt">(pilihan)</span></label>
+        <input type="text" id="alamat2" name="alamat2" placeholder="Blok, Tingkat, Unit (jika ada)">
+      </div>
+
+      <div class="form-row two-col">
+        <div>
+          <label>Bandar <span class="opt">(pilihan)</span></label>
+          <input type="text" id="bandar" name="bandar" placeholder="Nama bandar">
+        </div>
+        <div>
+          <label>Poskod <span class="req">*</span></label>
+          <input type="text" id="poskod" name="poskod" placeholder="XXXXX" maxlength="5" pattern="[0-9]{5}" required>
+          <div class="err-msg" id="err-poskod">Sila masukkan poskod (5 digit).</div>
+        </div>
+      </div>
+
+      <div class="form-row two-col">
+        <div>
+          <label>Negeri <span class="req">*</span></label>
+          <select id="negeri" name="negeri" required>
+            <option value="">— Sila Pilih —</option>
+            <option>Johor</option><option>Kedah</option><option>Kelantan</option>
+            <option>Melaka</option><option>Negeri Sembilan</option><option>Pahang</option>
+            <option>Perak</option><option>Perlis</option><option>Pulau Pinang</option>
+            <option>Sabah</option><option>Sarawak</option><option>Selangor</option>
+            <option>Terengganu</option><option>W.P. Kuala Lumpur</option>
+            <option>W.P. Labuan</option><option>W.P. Putrajaya</option>
+          </select>
+          <div class="err-msg" id="err-negeri">Sila pilih negeri.</div>
+        </div>
+        <div>
+          <label>Daerah <span class="req">*</span></label>
+          <select id="daerah" name="daerah" required>
+            <option value="">— Pilih Negeri Dahulu —</option>
+          </select>
+          <div class="err-msg" id="err-daerah">Sila pilih daerah.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── E: Hubungan ─────────────────────────────────────────────────────── -->
+  <div class="section-card">
+    <div class="section-header"><span class="sec-icon">📞</span> Bahagian E — Maklumat Hubungan</div>
+    <div class="section-body">
+
+      <div class="form-row">
+        <label>Alamat Emel <span class="req">*</span></label>
+        <input type="email" id="emel" name="emel" placeholder="nama@email.com" required>
+        <div class="err-msg" id="err-emel">Sila masukkan alamat emel yang sah.</div>
+      </div>
+
+      <div class="form-row two-col">
+        <div>
+          <label>Nombor Telefon Bimbit <span class="req">*</span></label>
+          <input type="tel" id="tel-bimbit" name="tel_bimbit" placeholder="+6011-XXXX XXXX" required>
+          <div class="err-msg" id="err-tel-bimbit">Sila masukkan nombor telefon bimbit.</div>
+        </div>
+        <div>
+          <label>Nombor Telefon Rumah <span class="opt">(pilihan)</span></label>
+          <input type="tel" id="tel-rumah" name="tel_rumah" placeholder="+603-XXXX XXXX">
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── F: Kelayakan ────────────────────────────────────────────────────── -->
+  <div class="section-card">
+    <div class="section-header"><span class="sec-icon">🎓</span> Bahagian F — Pengalaman &amp; Kelayakan <span style="font-weight:400;font-size:.85rem;opacity:.85">(Pilihan)</span></div>
+    <div class="section-body">
+
+      <div class="form-row">
+        <label>Kelayakan Akademik Tertinggi <span class="opt">(pilihan)</span></label>
+        <select id="kelayakan" name="kelayakan">
+          <option value="">— Sila Pilih —</option>
+          <option>SPM / Setaraf</option><option>Diploma</option>
+          <option>Ijazah Sarjana Muda</option><option>Sarjana</option>
+          <option>PhD</option><option>Lain-lain</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label>Bidang Pengkhususan <span class="opt">(pilihan)</span></label>
+        <input type="text" id="bidang" name="bidang" placeholder="Contoh: Teknologi Maklumat, Kewangan, Undang-undang">
+      </div>
+
+      <div class="form-row">
+        <label>Pengalaman dalam Bitcoin / Aset Digital / AI <span class="opt">(pilihan)</span></label>
+        <div class="radio-group">
+          <label><input type="radio" name="pengalaman" value="Kurang 1 tahun"> Kurang 1 tahun</label>
+          <label><input type="radio" name="pengalaman" value="1-3 tahun"> 1–3 tahun</label>
+          <label><input type="radio" name="pengalaman" value="3-5 tahun"> 3–5 tahun</label>
+          <label><input type="radio" name="pengalaman" value="Lebih 5 tahun"> Lebih 5 tahun</label>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>Pernah menjadi AJK pertubuhan sebelum ini? <span class="opt">(pilihan)</span></label>
+        <div class="radio-group" id="rg-ajk-lama">
+          <label><input type="radio" name="ajk_lama" value="Ya"> Ya</label>
+          <label><input type="radio" name="ajk_lama" value="Tidak"> Tidak</label>
+        </div>
+      </div>
+
+      <div class="form-row" id="row-pertubuhan-lama" style="display:none">
+        <label>Nama Pertubuhan Terdahulu <span class="opt">(pilihan)</span></label>
+        <input type="text" id="pertubuhan-lama" name="pertubuhan_lama" placeholder="Nama pertubuhan">
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── G: Perisytiharan Seksyen 9A ────────────────────────────────────── -->
+  <div class="section-card">
+    <div class="section-header" style="background:var(--red)"><span class="sec-icon">⚖️</span> Bahagian G — Perisytiharan Kelayakan (Seksyen 9A Akta 832)</div>
+    <div class="section-body">
+
+      <div class="notice" style="background:#fff0f0;border-color:var(--red);color:#5a0000;margin-bottom:18px">
+        ⚠️ <strong>AMARAN:</strong> Sila jawab SEMUA soalan di bawah dengan jujur.
+        Sebarang jawapan <strong>"Ya"</strong> pada soalan (a) hingga (e) bermakna anda
+        <strong>TIDAK LAYAK</strong> memegang jawatan dalam Jawatankuasa BitAIM.
+      </div>
+
+      <!-- 9A(a) -->
+      <div class="form-row">
+        <label>(a) Pernahkah anda disabitkan atas mana-mana kesalahan di bawah Akta Pertubuhan 1966? <span class="req">*</span></label>
+        <div class="radio-group" id="rg-9a-a">
+          <label><input type="radio" name="s9a_a" value="Ya"> Ya</label>
+          <label><input type="radio" name="s9a_a" value="Tidak"> Tidak</label>
+        </div>
+        <div class="hint warn" id="warn-9a-a" style="display:none">⛔ Anda TIDAK LAYAK menjadi AJK.</div>
+        <div class="err-msg" id="err-9a-a">Sila jawab soalan ini.</div>
+      </div>
+
+      <!-- 9A(b) -->
+      <div class="form-row">
+        <label>(b) Pernahkah anda disabitkan atas mana-mana kesalahan jenayah dengan hukuman denda RM2,000 atau lebih ATAU penjara 1 tahun atau lebih dalam tempoh 5 tahun lepas? <span class="req">*</span></label>
+        <div class="radio-group" id="rg-9a-b">
+          <label><input type="radio" name="s9a_b" value="Ya"> Ya</label>
+          <label><input type="radio" name="s9a_b" value="Tidak"> Tidak</label>
+        </div>
+        <div class="hint warn" id="warn-9a-b" style="display:none">⛔ Anda TIDAK LAYAK menjadi AJK.</div>
+        <div class="err-msg" id="err-9a-b">Sila jawab soalan ini.</div>
+      </div>
+
+      <!-- 9A(c) -->
+      <div class="form-row">
+        <label>(c) Pernahkah anda dikenakan perintah tahanan, sekatan, pengawasan atau pengusiran di bawah undang-undang keselamatan awam Malaysia (contoh: ISA, SOSMA, Akta Imigresen)? <span class="req">*</span></label>
+        <div class="radio-group" id="rg-9a-c">
+          <label><input type="radio" name="s9a_c" value="Ya"> Ya</label>
+          <label><input type="radio" name="s9a_c" value="Tidak"> Tidak</label>
+        </div>
+        <div class="hint warn" id="warn-9a-c" style="display:none">⛔ Anda TIDAK LAYAK menjadi AJK.</div>
+        <div class="err-msg" id="err-9a-c">Sila jawab soalan ini.</div>
+      </div>
+
+      <!-- 9A(d) -->
+      <div class="form-row">
+        <label>(d) Adakah anda seorang bankrap yang belum dilepaskan? <span class="req">*</span></label>
+        <div class="radio-group" id="rg-9a-d">
+          <label><input type="radio" name="s9a_d" value="Ya"> Ya</label>
+          <label><input type="radio" name="s9a_d" value="Tidak"> Tidak</label>
+        </div>
+        <div class="hint warn" id="warn-9a-d" style="display:none">⛔ Anda TIDAK LAYAK menjadi AJK.</div>
+        <div class="err-msg" id="err-9a-d">Sila jawab soalan ini.</div>
+      </div>
+
+      <!-- 9A(e) -->
+      <div class="form-row">
+        <label>(e) Pernahkah anda diisytiharkan tidak sempurna akal oleh mana-mana mahkamah? <span class="req">*</span></label>
+        <div class="radio-group" id="rg-9a-e">
+          <label><input type="radio" name="s9a_e" value="Ya"> Ya</label>
+          <label><input type="radio" name="s9a_e" value="Tidak"> Tidak</label>
+        </div>
+        <div class="hint warn" id="warn-9a-e" style="display:none">⛔ Anda TIDAK LAYAK menjadi AJK.</div>
+        <div class="err-msg" id="err-9a-e">Sila jawab soalan ini.</div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- Pertubuhan lain -->
+      <div class="form-row">
+        <label>Adakah anda memegang jawatan dalam pertubuhan lain yang berdaftar dengan ROS? <span class="req">*</span></label>
+        <div class="radio-group" id="rg-ros-lain">
+          <label><input type="radio" name="ros_lain" value="Ya"> Ya</label>
+          <label><input type="radio" name="ros_lain" value="Tidak"> Tidak</label>
+        </div>
+        <div class="err-msg" id="err-ros-lain">Sila jawab soalan ini.</div>
+      </div>
+
+      <div class="form-row" id="row-ros-lain-nama" style="display:none">
+        <label>Nama Pertubuhan Lain Tersebut <span class="opt">(pilihan)</span></label>
+        <input type="text" id="ros-lain-nama" name="ros_lain_nama" placeholder="Nama pertubuhan">
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── H: Perisytiharan Akhir ──────────────────────────────────────────── -->
+  <div class="section-card">
+    <div class="section-header"><span class="sec-icon">✍️</span> Bahagian H — Perisytiharan Akhir</div>
+    <div class="section-body">
+
+      <div class="decl-box">
+        ⚠️ <strong>AMARAN (Seksyen 54A Akta Pertubuhan 1966 [Akta 832]):</strong><br>
+        Memberikan maklumat palsu atau mengelirukan adalah <strong>KESALAHAN JENAYAH</strong> —
+        boleh didenda tidak melebihi <strong>RM10,000</strong> atau dipenjarakan tidak melebihi
+        <strong>3 tahun</strong> atau kedua-duanya.
+      </div>
+
+      <div class="form-row">
+        <label>Perisytiharan Pemohon <span class="req">*</span></label>
+        <div class="check-group">
+          <label id="lbl-decl">
+            <input type="checkbox" id="decl-check" name="declaration" value="setuju">
+            Saya mengaku bahawa semua maklumat yang diberikan adalah <strong>BENAR, TEPAT dan LENGKAP</strong>.
+            Saya sedar bahawa memberikan maklumat palsu adalah kesalahan jenayah di bawah Seksyen 54A Akta Pertubuhan 1966.
+          </label>
+        </div>
+        <div class="err-msg" id="err-decl">Sila tandakan perisytiharan ini untuk meneruskan.</div>
+      </div>
+
+      <div class="form-row">
+        <label>Nama Penuh sebagai Tandatangan Digital <span class="req">*</span></label>
+        <input type="text" id="tandatangan" name="tandatangan" placeholder="Nama penuh anda" required style="font-style:italic">
+        <div class="hint">Nama penuh anda berfungsi sebagai tandatangan digital.</div>
+        <div class="err-msg" id="err-tandatangan">Sila masukkan nama penuh sebagai tandatangan.</div>
+      </div>
+
+      <div class="form-row">
+        <label>Tarikh Pengisian <span class="req">*</span></label>
+        <input type="date" id="tarikh-isi" name="tarikh_isi" required>
+        <div class="err-msg" id="err-tarikh-isi">Sila masukkan tarikh pengisian.</div>
+      </div>
+
+      <div class="form-row">
+        <label>Nota Tambahan <span class="opt">(pilihan)</span></label>
+        <textarea id="nota" name="nota" placeholder="Sebarang maklumat tambahan yang ingin disampaikan..."></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Buttons ─────────────────────────────────────────────────────────── -->
+  <div class="btn-row">
+    <button type="submit" class="btn btn-primary">✅ Hantar Borang</button>
+    <button type="button" class="btn btn-print" onclick="window.print()">🖨️ Cetak / Simpan PDF</button>
+    <button type="button" class="btn btn-secondary" onclick="resetForm()">🔄 Set Semula</button>
+  </div>
+
+  </form>
+
+  <!-- ── Success Screen ──────────────────────────────────────────────────── -->
+  <div id="success-screen">
+    <div class="success-icon">✅</div>
+    <div class="success-title">Borang Berjaya Dihantar!</div>
+    <div class="success-msg">
+      Terima kasih. Maklumat anda telah direkodkan.<br>
+      No. Rujukan: <strong id="success-ref"></strong><br><br>
+      Sila lampirkan salinan MyKad (depan &amp; belakang) kepada Setiausaha BitAIM.<br>
+      Anda boleh mencetak borang ini sebagai rekod peribadi.
+    </div>
+    <div class="btn-row" style="justify-content:center">
+      <button class="btn btn-print" onclick="window.print()">🖨️ Cetak / Simpan PDF</button>
+      <button class="btn btn-secondary" onclick="newForm()">📋 Borang Baharu</button>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ── Daerah Data ──────────────────────────────────────────────────────────────
+const DAERAH = {
+  'Johor':['Batu Pahat','Johor Bahru','Kluang','Kota Tinggi','Mersing','Muar','Pontian','Segamat','Kulai','Tangkak'],
+  'Kedah':['Baling','Bandar Baharu','Kota Setar','Kuala Muda','Kubang Pasu','Kulim','Langkawi','Padang Terap','Pendang','Pokok Sena','Sik','Yan'],
+  'Kelantan':['Bachok','Gua Musang','Jeli','Kota Bharu','Kuala Krai','Machang','Pasir Mas','Pasir Puteh','Tanah Merah','Tumpat'],
+  'Melaka':['Alor Gajah','Jasin','Melaka Tengah'],
+  'Negeri Sembilan':['Jelebu','Jempol','Kuala Pilah','Port Dickson','Rembau','Seremban','Tampin'],
+  'Pahang':['Bentong','Bera','Cameron Highlands','Jerantut','Kuantan','Lipis','Maran','Pekan','Raub','Rompin','Temerloh'],
+  'Perak':['Batang Padang','Bagan Datuk','Hilir Perak','Hulu Perak','Kampar','Kerian','Kinta','Kuala Kangsar','Larut Matang dan Selama','Manjung','Muallim','Perak Tengah'],
+  'Perlis':['Arau','Kangar','Padang Besar'],
+  'Pulau Pinang':['Barat Daya','Seberang Perai Selatan','Seberang Perai Tengah','Seberang Perai Utara','Timur Laut'],
+  'Sabah':['Beaufort','Beluran','Keningau','Kinabatangan','Kota Belud','Kota Kinabalu','Kota Marudu','Kuala Penyu','Kudat','Kunak','Lahad Datu','Nabawan','Papar','Penampang','Pitas','Putatan','Ranau','Sandakan','Semporna','Sipitang','Tambunan','Tawau','Telupid','Tenom','Tongod','Tuaran'],
+  'Sarawak':['Bau','Belaga','Betong','Bintulu','Dalat','Daro','Julau','Kapit','Kota Samarahan','Kuching','Lawas','Limbang','Lubok Antu','Lundu','Marudi','Matu','Meradong','Miri','Mukah','Pakan','Saratok','Sarikei','Serian','Sibu','Simunjan','Song','Sri Aman','Subis','Tatau'],
+  'Selangor':['Gombak','Hulu Langat','Hulu Selangor','Klang','Kuala Langat','Kuala Selangor','Petaling','Sabak Bernam','Sepang'],
+  'Terengganu':['Besut','Dungun','Hulu Terengganu','Kemaman','Kuala Nerus','Kuala Terengganu','Marang','Setiu'],
+  'W.P. Kuala Lumpur':['Chow Kit','Kepong','Keramat','Lembah Pantai','Setiawangsa','Titiwangsa','Wangsa Maju'],
+  'W.P. Labuan':['Labuan'],
+  'W.P. Putrajaya':['Putrajaya'],
+};
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  // Set today's date
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('tarikh-isi').value = today;
+
+  // Generate ref number
+  const refNum = Math.floor(Math.random() * 9000) + 1000;
+  document.getElementById('ref-num').textContent = refNum;
+  document.getElementById('ref-date').textContent = new Date().toLocaleDateString('ms-MY', {day:'2-digit',month:'long',year:'numeric'});
+
+  // Radio group styling
+  document.querySelectorAll('.radio-group, .check-group').forEach(grp => {
+    grp.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('change', () => {
+        grp.querySelectorAll('label').forEach(l => l.classList.remove('selected'));
+        if (inp.checked) inp.closest('label').classList.add('selected');
+      });
+    });
+  });
+
+  // Negeri → Daerah
+  document.getElementById('negeri').addEventListener('change', function() {
+    const daerahSel = document.getElementById('daerah');
+    daerahSel.innerHTML = '<option value="">— Sila Pilih —</option>';
+    const list = DAERAH[this.value] || [];
+    list.forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d; opt.textContent = d;
+      daerahSel.appendChild(opt);
+    });
+    if (!list.length) daerahSel.innerHTML = '<option value="">— Tiada Daerah —</option>';
+  });
+
+  // AJK lama conditional
+  document.querySelectorAll('input[name="ajk_lama"]').forEach(r => {
+    r.addEventListener('change', () => {
+      document.getElementById('row-pertubuhan-lama').style.display = r.value === 'Ya' ? 'block' : 'none';
+    });
+  });
+
+  // ROS lain conditional
+  document.querySelectorAll('input[name="ros_lain"]').forEach(r => {
+    r.addEventListener('change', () => {
+      document.getElementById('row-ros-lain-nama').style.display = r.value === 'Ya' ? 'block' : 'none';
+    });
+  });
+
+  // 9A warnings
+  ['a','b','c','d','e'].forEach(x => {
+    document.querySelectorAll(`input[name="s9a_${x}"]`).forEach(r => {
+      r.addEventListener('change', () => {
+        document.getElementById(`warn-9a-${x}`).style.display = r.value === 'Ya' ? 'block' : 'none';
+      });
+    });
+  });
+
+  // Progress tracking
+  const allRequired = document.querySelectorAll('[required], input[type=radio][name]');
+  const radioNames = new Set();
+  document.querySelectorAll('input[type=radio]').forEach(r => radioNames.add(r.name));
+
+  function updateProgress() {
+    let filled = 0, total = 0;
+    // Text/select/date/email/tel/textarea required
+    document.querySelectorAll('input[required]:not([type=radio]):not([type=checkbox]), select[required], textarea[required]').forEach(el => {
+      total++;
+      if (el.value.trim()) filled++;
+    });
+    // Radio groups required
+    const reqRadios = ['jawatan','jantina','pekerjaan','s9a_a','s9a_b','s9a_c','s9a_d','s9a_e','ros_lain'];
+    reqRadios.forEach(name => {
+      total++;
+      if (document.querySelector(`input[name="${name}"]:checked`)) filled++;
+    });
+    // Checkbox
+    total++;
+    if (document.getElementById('decl-check').checked) filled++;
+
+    const pct = Math.round((filled / total) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-pct').textContent = pct + '%';
+  }
+
+  document.getElementById('ajk-form').addEventListener('input', updateProgress);
+  document.getElementById('ajk-form').addEventListener('change', updateProgress);
+  updateProgress();
+});
+
+// ── Validation ────────────────────────────────────────────────────────────────
+function showErr(id, show) {
+  const el = document.getElementById(id);
+  if (el) { el.classList.toggle('show', show); }
+}
+function markField(id, error) {
+  const el = document.getElementById(id);
+  if (el) { el.classList.toggle('error', error); }
+}
+
+function validateForm() {
+  let valid = true;
+
+  // Jawatan
+  const jawatan = document.querySelector('input[name="jawatan"]:checked');
+  showErr('err-jawatan', !jawatan); if (!jawatan) valid = false;
+
+  // Jenis ID
+  const jenisId = document.getElementById('jenis-id').value;
+  showErr('err-jenis-id', !jenisId); markField('jenis-id', !jenisId); if (!jenisId) valid = false;
+
+  // Nombor ID
+  const nomborId = document.getElementById('nombor-id').value.trim();
+  showErr('err-nombor-id', !nomborId); markField('nombor-id', !nomborId); if (!nomborId) valid = false;
+
+  // Gelaran
+  const gelaran = document.getElementById('gelaran').value;
+  showErr('err-gelaran', !gelaran); markField('gelaran', !gelaran); if (!gelaran) valid = false;
+
+  // Jantina
+  const jantina = document.querySelector('input[name="jantina"]:checked');
+  showErr('err-jantina', !jantina); if (!jantina) valid = false;
+
+  // Nama penuh
+  const nama = document.getElementById('nama-penuh').value.trim();
+  showErr('err-nama-penuh', !nama); markField('nama-penuh', !nama); if (!nama) valid = false;
+
+  // Tarikh lahir
+  const tl = document.getElementById('tarikh-lahir').value;
+  showErr('err-tarikh-lahir', !tl); markField('tarikh-lahir', !tl); if (!tl) valid = false;
+
+  // Tempat lahir
+  const tpl = document.getElementById('tempat-lahir').value.trim();
+  showErr('err-tempat-lahir', !tpl); markField('tempat-lahir', !tpl); if (!tpl) valid = false;
+
+  // Pekerjaan
+  const pekerjaan = document.querySelector('input[name="pekerjaan"]:checked');
+  showErr('err-pekerjaan', !pekerjaan); if (!pekerjaan) valid = false;
+
+  // Alamat
+  const alamat1 = document.getElementById('alamat1').value.trim();
+  showErr('err-alamat1', !alamat1); markField('alamat1', !alamat1); if (!alamat1) valid = false;
+
+  // Poskod
+  const poskod = document.getElementById('poskod').value.trim();
+  const poskodOk = /^\d{5}$/.test(poskod);
+  showErr('err-poskod', !poskodOk); markField('poskod', !poskodOk); if (!poskodOk) valid = false;
+
+  // Negeri
+  const negeri = document.getElementById('negeri').value;
+  showErr('err-negeri', !negeri); markField('negeri', !negeri); if (!negeri) valid = false;
+
+  // Daerah
+  const daerah = document.getElementById('daerah').value;
+  showErr('err-daerah', !daerah); markField('daerah', !daerah); if (!daerah) valid = false;
+
+  // Emel
+  const emel = document.getElementById('emel').value.trim();
+  const emelOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emel);
+  showErr('err-emel', !emelOk); markField('emel', !emelOk); if (!emelOk) valid = false;
+
+  // Tel bimbit
+  const tel = document.getElementById('tel-bimbit').value.trim();
+  showErr('err-tel-bimbit', !tel); markField('tel-bimbit', !tel); if (!tel) valid = false;
+
+  // 9A questions
+  ['a','b','c','d','e'].forEach(x => {
+    const ans = document.querySelector(`input[name="s9a_${x}"]:checked`);
+    showErr(`err-9a-${x}`, !ans); if (!ans) valid = false;
+  });
+
+  // ROS lain
+  const rosLain = document.querySelector('input[name="ros_lain"]:checked');
+  showErr('err-ros-lain', !rosLain); if (!rosLain) valid = false;
+
+  // Declaration
+  const decl = document.getElementById('decl-check').checked;
+  showErr('err-decl', !decl); if (!decl) valid = false;
+
+  // Tandatangan
+  const ttd = document.getElementById('tandatangan').value.trim();
+  showErr('err-tandatangan', !ttd); markField('tandatangan', !ttd); if (!ttd) valid = false;
+
+  // Tarikh isi
+  const ti = document.getElementById('tarikh-isi').value;
+  showErr('err-tarikh-isi', !ti); markField('tarikh-isi', !ti); if (!ti) valid = false;
+
+  return valid;
+}
+
+// ── Submit ────────────────────────────────────────────────────────────────────
+document.getElementById('ajk-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  if (!validateForm()) {
+    // Scroll to first error
+    const firstErr = document.querySelector('.err-msg.show, .error');
+    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  // Show success
+  this.style.display = 'none';
+  const refNo = document.getElementById('ref-no').textContent;
+  document.getElementById('success-ref').textContent = refNo;
+  document.getElementById('success-screen').style.display = 'block';
+  document.getElementById('success-screen').scrollIntoView({ behavior: 'smooth' });
+});
+
+// ── Reset ─────────────────────────────────────────────────────────────────────
+function resetForm() {
+  if (!confirm('Adakah anda pasti ingin menetapkan semula borang? Semua maklumat akan dipadam.')) return;
+  document.getElementById('ajk-form').reset();
+  document.querySelectorAll('.err-msg').forEach(e => e.classList.remove('show'));
+  document.querySelectorAll('.error').forEach(e => e.classList.remove('error'));
+  document.querySelectorAll('.radio-group label, .check-group label').forEach(l => l.classList.remove('selected'));
+  document.getElementById('row-pertubuhan-lama').style.display = 'none';
+  document.getElementById('row-ros-lain-nama').style.display = 'none';
+  ['a','b','c','d','e'].forEach(x => { document.getElementById(`warn-9a-${x}`).style.display = 'none'; });
+  document.getElementById('daerah').innerHTML = '<option value="">— Pilih Negeri Dahulu —</option>';
+  document.getElementById('tarikh-isi').value = new Date().toISOString().split('T')[0];
+  document.getElementById('progress-fill').style.width = '0%';
+  document.getElementById('progress-pct').textContent = '0%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function newForm() {
+  document.getElementById('success-screen').style.display = 'none';
+  document.getElementById('ajk-form').style.display = 'block';
+  resetForm();
+}
+</script>
+</body>
+</html>
